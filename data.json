@@ -1,0 +1,8 @@
+[
+    {"medicine":"alex_cough", "consum": 1000},
+    {"medicine":"arkamin_tab", "consum": 500},
+    {"medicine":"acemizplus", "consum": 1500},
+    {"medicine":"ascoril", "consum": 3000},
+    {"medicine":"amoxyclav", "consum": 200},
+    {"medicine":"paracetamol", "consum": 2000}
+]

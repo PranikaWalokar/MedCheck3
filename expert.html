@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expert Profile - MedCheck</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f8ff;
+            margin: 0;
+        }
+
+        .profile-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            position: relative;
+        }
+
+        .profile-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #008080;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #006666;
+            font-size: 14px;
+        }
+
+        .input-container input,
+        .input-container textarea,
+        .input-container select {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .input-container textarea {
+            resize: vertical;
+        }
+
+        .profile-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #008080;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .profile-container button:hover {
+            background-color: #006666;
+        }
+
+        #success-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .expert-fields, .user-fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Expert Profile</h2>
+        <form id="profileForm">
+            <div class="input-container">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="input-container">
+                <label for="role">User or Expert:</label>
+                <select id="role" name="role" required onchange="toggleFields(this.value)">
+                    <option value="">Select Role</option>
+                    <option value="user">User</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+
+            <div class="input-container">
+                <label for="email">Email ID:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="input-container">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required onchange="calculateAge()">
+            </div>
+
+            <div class="input-container">
+                <label for="age">Age:</label>
+                <input type="text" id="age" name="age" readonly>
+            </div>
+
+            <div class="expert-fields">
+                <div class="input-container">
+                    <label for="experience">Experience (Years):</label>
+                    <input type="number" id="experience" name="experience">
+                </div>
+            </div>
+
+            <div class="user-fields">
+                <div class="input-container">
+                    <label for="medicine">Select Medicine:</label>
+                    <select id="medicine">
+                        <option value="">SeleCt Medicine</option>
+                        <option value="medicine1">medicine1</option>
+                        <option value="medicine2">medicine2</option>
+                        <option value="medicine3">medicine3</option>
+                    </select>
+                </div>
+                <div class="input-container">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" name="comment" rows="4" style="display: none;"></textarea>
+                </div>
+            </div>
+
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+
+        <div id="success-message">
+            <p>Profile submitted successfully!</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            const dob = new Date(document.getElementById('dob').value);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const month = today.getMonth() - dob.getMonth();
+            if (month < 0 || (month === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            document.getElementById('age').value = age;
+        }
+
+        function toggleFields(role) {
+            const expertFields = document.querySelector('.expert-fields');
+            const userFields = document.querySelector('.user-fields');
+
+            if (role === 'expert') {
+                expertFields.style.display = 'block';
+                userFields.style.display = 'none';
+            } else if (role === 'user') {
+                expertFields.style.display = 'none';
+                userFields.style.display = 'block';
+            } else {
+                expertFields.style.display = 'none';
+                userFields.style.display = 'none';
+            }
+        }
+
+        function submitForm() {
+            alert("Thank you for your response!");
+                setTimeout(function() {
+                    window.location.href ="index2.html"; 
+                },3000)
+                
+                const formData = new FormData(document.getElementById('profileForm'));
+
+            fetch('/submit_profile', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('profileForm').style.display = 'none';
+                alert("Thank you for your response!");
+                setTimeout(function() {
+                    window.location.href = "index2.html";
+                }, 3000);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred during submission.');
+            });
+        }
+
+        const medicineSelect = document.getElementById("medicine");
+        const commentTextarea = document.getElementById("comment");
+
+        medicineSelect.addEventListener("change", function() {
+            if (medicineSelect.value) {
+                commentTextarea.style.display = "block";
+            } else {
+                commentTextarea.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
